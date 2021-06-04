@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="menu_name">
+        <item>Questions</item>
+        <item>Tags</item>
+        <item>Users</item>
+    </string-array>
+
+    <string-array name="menu_icons">
+        <item>@drawable/ic_baseline_question_answer_24</item>
+        <item>@drawable/ic_tag</item>
+        <item>@drawable/ic_user</item>
+    </string-array>
+</resources>
