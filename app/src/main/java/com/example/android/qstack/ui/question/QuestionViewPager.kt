@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.android.qstack.databinding.QuestionViewpagerBinding
 import com.example.android.qstack.ui.question.featuredQuestions.FeaturedQuestionFragment
+import com.example.android.qstack.ui.question.generalQuestions.GeneralQuestionFragment
 import com.example.android.qstack.ui.question.newQuestions.NewQuestionsFragment
 import com.example.android.qstack.ui.question.unansweredQuestion.UnansweredQuestionFragment
 import com.google.android.material.tabs.TabLayoutMediator
@@ -23,15 +24,16 @@ class QuestionViewPager : Fragment() {
         //Inflate the layout
         binding = QuestionViewpagerBinding.inflate(inflater, container, false)
 
-        val fragmentList = arrayListOf(NewQuestionsFragment(),
+        val fragmentList = arrayListOf(GeneralQuestionFragment(),NewQuestionsFragment(),
             FeaturedQuestionFragment(), UnansweredQuestionFragment())
         binding.viewpager.adapter = QuestionViewPagerAdapter(this, fragmentList)
 
         TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
             when (position) {
-                0 -> tab.text = "NEWEST"
-                1 -> tab.text = "FEATURED"
-                2 -> tab.text = "UNANSWERED"
+                0 -> tab.text = "QUESTION"
+                1 -> tab.text = "NEWEST"
+                2 -> tab.text = "FEATURED"
+                3 -> tab.text = "UNANSWERED"
             }
         }.attach()
 

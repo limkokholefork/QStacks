@@ -60,5 +60,26 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
+    //Kotlin Moshi
+    implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
+
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
+    //Logging Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //Logging Interceptor
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    //RoomDB
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+
+
 
 }

@@ -2,6 +2,13 @@ package com.example.android.qstack
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 @HiltAndroidApp
-class QStacksApplication : Application()
+class QStacksApplication : Application(){
+
+    override fun onCreate() {
+        super.onCreate()
+        Timber.plant(Timber.DebugTree())
+    }
+}
