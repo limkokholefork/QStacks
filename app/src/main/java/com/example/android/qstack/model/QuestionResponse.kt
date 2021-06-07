@@ -1,5 +1,8 @@
 package com.example.android.qstack.model
 
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
 data class QuestionResponse(
@@ -14,19 +17,21 @@ data class QuestionResponse(
 	val hasMore: Boolean? = null,
 
 	@Json(name="items")
-	val items: List<ItemsItem>? = null
+	val items: List<Questions> = emptyList()
 )
 
-data class ItemsItem(
+@Entity
+data class Questions(
 
 	@Json(name="owner")
+	@Embedded
 	val owner: Owner,
 
 	@Json(name="closed_date")
 	val closedDate: Int? = null,
 
 	@Json(name="link")
-	val link: String,
+	val questionLink: String,
 
 	@Json(name="last_activity_date")
 	val lastActivityDate: Long? = null,
@@ -41,6 +46,7 @@ data class ItemsItem(
 	val title: String,
 
 	@Json(name="question_id")
+	@PrimaryKey
 	val questionId: Int,
 
 	@Json(name="tags")

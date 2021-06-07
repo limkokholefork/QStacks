@@ -3,18 +3,19 @@ package com.example.android.qstack.db
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.android.qstack.model.QuestionUiModel
+import com.example.android.qstack.model.Questions
 
 @Dao
 interface QuestionsDao {
 
-    @Insert
-    fun addQuestions(questionUiModels : List<QuestionUiModel>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addQuestions(question : List<Questions>)
 
-    @Query("SELECT * FROM question")
-    fun getAllQuestions() : PagingSource<Int, QuestionUiModel>
+    @Query("SELECT * FROM questions")
+    fun getAllQuestions() : PagingSource<Int, Questions>
 
-    @Query("DELETE FROM question")
-    fun nukeTable()
+    @Query("DELETE FROM questions")
+    suspend fun nukeTable()
 }
