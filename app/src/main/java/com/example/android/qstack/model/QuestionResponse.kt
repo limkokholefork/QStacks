@@ -14,37 +14,37 @@ data class QuestionResponse(
 	val hasMore: Boolean? = null,
 
 	@Json(name="items")
-	val items: List<ItemsItem?>? = null
+	val items: List<ItemsItem>? = null
 )
 
 data class ItemsItem(
 
 	@Json(name="owner")
-	val owner: Owner? = null,
+	val owner: Owner,
 
 	@Json(name="closed_date")
 	val closedDate: Int? = null,
 
 	@Json(name="link")
-	val link: String? = null,
+	val link: String,
 
 	@Json(name="last_activity_date")
-	val lastActivityDate: Int? = null,
+	val lastActivityDate: Long? = null,
 
 	@Json(name="creation_date")
-	val creationDate: Int? = null,
+	val creationDate: Long,
 
 	@Json(name="answer_count")
 	val answerCount: Int? = null,
 
 	@Json(name="title")
-	val title: String? = null,
+	val title: String,
 
 	@Json(name="question_id")
-	val questionId: Int? = null,
+	val questionId: Int,
 
 	@Json(name="tags")
-	val tags: List<String?>? = null,
+	val tags: List<String>? = null,
 
 	@Json(name="score")
 	val score: Int? = null,
@@ -86,7 +86,7 @@ data class Owner(
 	val reputation: Int? = null,
 
 	@Json(name="display_name")
-	val displayName: String? = null,
+	val displayName: String,
 
 	@Json(name="accept_rate")
 	val acceptRate: Int? = null
