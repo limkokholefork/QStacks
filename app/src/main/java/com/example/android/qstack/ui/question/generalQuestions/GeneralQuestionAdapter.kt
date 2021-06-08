@@ -1,6 +1,5 @@
-package com.example.android.qstack.ui.question.newQuestions
+package com.example.android.qstack.ui.question.generalQuestions
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -12,8 +11,8 @@ import com.example.android.qstack.databinding.QuestionItemBinding
 import com.example.android.qstack.model.Questions
 import com.example.android.qstack.utils.convertEpochDateToTime
 
-class NewQuestionAdapter : PagingDataAdapter<Questions,
-        NewQuestionAdapter.NewQuestionViewHolder>(NewQuestionViewHolder.newQuestionUtil) {
+class GeneralQuestionAdapter : PagingDataAdapter<Questions,
+        GeneralQuestionAdapter.NewQuestionViewHolder>(NewQuestionViewHolder.newQuestionUtil) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewQuestionViewHolder {
@@ -39,11 +38,11 @@ class NewQuestionAdapter : PagingDataAdapter<Questions,
         }
 
         private fun ImageView.bindImageToView(profilePicsUrl : String?){
-            Glide.with(this).load(Uri.parse(profilePicsUrl)).into(this)
+            Glide.with(this).load(profilePicsUrl).into(this)
         }
 
         companion object{
-            fun from(parent : ViewGroup) : NewQuestionViewHolder{
+            fun from(parent : ViewGroup) : NewQuestionViewHolder {
                 return NewQuestionViewHolder(QuestionItemBinding.
                 inflate(LayoutInflater.from(parent.context), parent, false))
             }

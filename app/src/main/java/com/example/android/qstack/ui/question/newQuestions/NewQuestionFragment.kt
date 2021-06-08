@@ -1,4 +1,4 @@
-package com.example.android.qstack.ui.question.generalQuestions
+package com.example.android.qstack.ui.question.newQuestions
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.android.qstack.R
 
-class GeneralQuestionFragment : Fragment() {
+class NewQuestionFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

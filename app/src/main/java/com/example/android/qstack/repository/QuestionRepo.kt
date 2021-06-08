@@ -11,7 +11,6 @@ import javax.inject.Inject
 class QuestionRepo @Inject constructor(private val questionMediator: QuestionMediator,
                                        private val qStacksDB: QStacksDB) {
 
-
     fun getQuestions() : Flow<PagingData<Questions>> {
         return Pager(config = PagingConfig(PAGING_SIZE, enablePlaceholders = false),
             pagingSourceFactory = {qStacksDB.getQuestionDao().getAllQuestions()},

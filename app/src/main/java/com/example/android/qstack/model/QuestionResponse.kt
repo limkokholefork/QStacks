@@ -17,7 +17,7 @@ data class QuestionResponse(
 	val hasMore: Boolean? = null,
 
 	@Json(name="items")
-	val items: List<Questions> = emptyList()
+	val items: List<Questions>
 )
 
 @Entity

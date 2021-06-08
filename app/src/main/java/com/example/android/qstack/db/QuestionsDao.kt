@@ -13,7 +13,7 @@ interface QuestionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addQuestions(question : List<Questions>)
 
-    @Query("SELECT * FROM questions")
+    @Query("SELECT * FROM questions ORDER BY lastActivityDate DESC")
     fun getAllQuestions() : PagingSource<Int, Questions>
 
     @Query("DELETE FROM questions")
