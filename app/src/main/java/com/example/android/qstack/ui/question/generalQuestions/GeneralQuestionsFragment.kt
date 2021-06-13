@@ -1,18 +1,20 @@
 package com.example.android.qstack.ui.question.generalQuestions
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.android.qstack.WebViewActivity
 import com.example.android.qstack.databinding.FragmentNewQuestionsBinding
+import com.example.android.qstack.utils.LINK_KEY
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -26,7 +28,6 @@ class GeneralQuestionsFragment : Fragment() {
     private val generalQuestionViewModel : GeneralQuestionViewModel by viewModels()
     private lateinit var questionAdapter : GeneralQuestionAdapter
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,8 +35,13 @@ class GeneralQuestionsFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentNewQuestionsBinding.inflate(inflater, container, false)
 
-        questionAdapter = GeneralQuestionAdapter()
-
+        questionAdapter = GeneralQuestionAdapter(WebViewClickListener {
+            it?.let {link->
+                val intent = Intent(requireContext(), WebViewActivity::class.java)
+                intent.putExtra(LINK_KEY, link)
+                startActivity(intent)
+            }
+        })
         binding.recyclerView.apply {
             adapter = questionAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -46,6 +52,7 @@ class GeneralQuestionsFragment : Fragment() {
         lifecycleScope.launch {
             init()
         }
+
 
         return binding.root
     }

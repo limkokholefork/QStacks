@@ -9,14 +9,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avinash.library.FragmentStateSaver
 import com.example.android.qstack.menu.DrawerAdapter
+import com.example.android.qstack.menu.DrawerItem
+import com.example.android.qstack.menu.SimpleItem
 import com.example.android.qstack.ui.question.QuestionViewPager
 import com.example.android.qstack.ui.tag.TagFragment
 import com.example.android.qstack.ui.users.UsersFragment
-import com.example.android.qstack.menu.DrawerItem
-import com.example.android.qstack.menu.SimpleItem
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,8 +29,11 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
 
     private var screenTitles: Array<String>? = null
     private var screenIcons: Array<Drawable?>? = null
-    @Inject lateinit var slidingRootNavBuilder: SlidingRootNavBuilder
+    @Inject
+    lateinit var slidingRootNavBuilder: SlidingRootNavBuilder
     private lateinit var slidingRootNav: SlidingRootNav
+
+    private lateinit var fragmentStateSaver: FragmentStateSaver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,19 +43,34 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
 
         slidingRootNavBuilder.withToolbarMenuToggle(toolbar)
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             slidingRootNavBuilder.withSavedState(savedInstanceState)
         }
         slidingRootNav = slidingRootNavBuilder.inject()
         screenIcons = loadScreenIcon()
         screenTitles = loadScreenTitles()
 
+        val container = findViewById<FragmentContainerView>(R.id.fragment_container)
+
+        fragmentStateSaver = object : FragmentStateSaver(container, supportFragmentManager) {
+            override fun getItem(item: Int): Fragment {
+                return when(item){
+                    0 -> QuestionViewPager()
+                    1 -> TagFragment()
+                    2 -> UsersFragment()
+                    else -> QuestionViewPager()
+                }
+            }
+        }
+
+
         //List of icons and screen titles to be displayed
         @Suppress("UNCHECKED_CAST")
         val testList: List<DrawerItem<DrawerAdapter.ViewHolder>> = listOf(
             createItemFor(QUESTION).setChecked(true),
             createItemFor(TAGS),
-            createItemFor(USERS)) as List<DrawerItem<DrawerAdapter.ViewHolder>>
+            createItemFor(USERS)
+        ) as List<DrawerItem<DrawerAdapter.ViewHolder>>
 
         val adapter = DrawerAdapter(testList)
         adapter.setListener(this)
@@ -62,16 +82,11 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
         adapter.setSelected(QUESTION)
     }
 
-    private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
-    }
-
     //Helper method for icons and titles to be passed into recycler-view
     private fun createItemFor(position: Int): DrawerItem<*> {
-        return SimpleItem(screenIcons!![position]!!
-            , screenTitles!![position])
+        return SimpleItem(
+            screenIcons!![position]!!, screenTitles!![position]
+        )
             .withIconTint(color(R.color.colorAccent))
             .withTextTint(color(R.color.colorAccent))
             .withSelectedTextTint(color(R.color.colorLight))
@@ -89,7 +104,7 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
         val icons = arrayOfNulls<Drawable>(ta.length())
         for (i in 0 until ta.length()) {
             @StyleableRes
-            val id = ta.getResourceId( i, 0)
+            val id = ta.getResourceId(i, 0)
             if (id != 0) {
                 icons[i] = ContextCompat.getDrawable(this, id)
             }
@@ -103,6 +118,7 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
     private fun color(@ColorRes res: Int): Int {
         return ContextCompat.getColor(this, res)
     }
+
     companion object {
         private const val QUESTION = 0
         private const val TAGS = 1
@@ -110,12 +126,20 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
     }
 
     override fun onItemSelected(position: Int) {
-        when(position){
-            0 -> showFragment(QuestionViewPager())
-            1 -> showFragment(TagFragment())
-            2 -> showFragment(UsersFragment())
+        when (position) {
+            0 -> fragmentStateSaver.changeFragment(0)
+            1 -> fragmentStateSaver.changeFragment(1)
+            2 -> fragmentStateSaver.changeFragment(2)
         }
+
         slidingRootNav.closeMenu()
     }
 
+//    private fun showFragment(fragment: Fragment){
+//        supportFragmentManager.commit {
+//            replace(R.id.fragment_container, fragment)
+//            setReorderingAllowed(true)
+//            addToBackStack("name")
+//        }
+//    }
 }

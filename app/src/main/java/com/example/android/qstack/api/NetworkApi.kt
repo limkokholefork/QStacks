@@ -1,5 +1,6 @@
 package com.example.android.qstack.api
 
+import com.example.android.qstack.model.NewQuestionResponse
 import com.example.android.qstack.model.QuestionResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
@@ -14,4 +15,13 @@ interface NetworkApi {
                           @Query("page")page : Int,
                           @Query("pagesize")pageSize : Int)
     : Deferred<QuestionResponse>
+
+    @GET("questions")
+    fun getNewestQuestionAsync(@Query("site")site: String,
+                               @Query("order")order: String,
+                               @Query("sort")sortOrder: String,
+                               @Query("tab")newQuestion : String,
+                               @Query("page")page: Int,
+                               @Query("pagesize")pageSize: Int)
+    : Deferred<NewQuestionResponse>
 }

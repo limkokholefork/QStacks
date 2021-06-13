@@ -4,6 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.example.android.qstack.model.NRemoteKey
+import com.example.android.qstack.model.NewQuestion
 import com.example.android.qstack.model.Questions
 import com.example.android.qstack.model.RemoteKey
 import com.squareup.moshi.JsonAdapter
@@ -12,10 +14,16 @@ import com.squareup.moshi.Types
 import java.lang.reflect.ParameterizedType
 
 @TypeConverters(TagsTypeConverter::class)
-@Database(entities = [Questions::class, RemoteKey::class], exportSchema = false, version = 1)
+@Database(entities = [Questions::class,
+    RemoteKey::class,
+    NewQuestion::class,
+    NRemoteKey::class],
+    exportSchema = false, version = 1)
 abstract class QStacksDB : RoomDatabase() {
     abstract fun getQuestionDao(): QuestionsDao
     abstract fun getRemoteKeyDao() : RemoteKeyDao
+    abstract fun getNewQuestionDao() : NewQuestionDao
+    abstract fun getNRemoteKeyDao() : NRemoteKeyDao
 }
 
 class TagsTypeConverter {

@@ -54,6 +54,7 @@ class QuestionMediator @Inject constructor(private val qStacksDB: QStacksDB,
             val questions = response.await()
             val questionList = questions.items
             val endOfPaginationReached = questionList.isEmpty()
+            Timber.d("End of pagination reached is $endOfPaginationReached")
             qStacksDB.withTransaction {
                 if (loadType == LoadType.REFRESH){
                     qStacksDB.getQuestionDao().nukeTable()

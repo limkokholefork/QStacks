@@ -2,6 +2,8 @@ package com.example.android.qstack.utils
 
 import java.util.*
 
+const val LINK_KEY = "link"
+
 enum class OrderBY(val order : String){
     DESC("desc"), ASC("asc")
 }
