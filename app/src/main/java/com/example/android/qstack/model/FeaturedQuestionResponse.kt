@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
-data class QuestionResponse(
+data class FeaturedQuestionResponse(
 
 	@Json(name="quota_max")
 	val quotaMax: Int? = null,
@@ -17,46 +17,49 @@ data class QuestionResponse(
 	val hasMore: Boolean? = null,
 
 	@Json(name="items")
-	val items: List<Questions>
+	val items: List<FeaturedQuestion> = emptyList()
 )
 
 @Entity
-data class Questions(
+data class FeaturedQuestion(
 
-	@Json(name="owner")
 	@Embedded
-	val owner: Owner,
+	@Json(name="owner")
+	val owner: FeaturedQuestionOwner? = null,
 
-	@Json(name="closed_date")
-	val closedDate: Int? = null,
+	@Json(name="content_license")
+	val contentLicense: String? = null,
 
 	@Json(name="link")
-	val questionLink: String,
+	val link: String? = null,
 
 	@Json(name="last_activity_date")
-	val lastActivityDate: Long? = null,
+	val lastActivityDate: Int? = null,
 
 	@Json(name="creation_date")
-	val creationDate: Long,
+	val creationDate: Long? = null,
 
 	@Json(name="answer_count")
 	val answerCount: Int? = null,
 
 	@Json(name="title")
-	val title: String,
+	val title: String? = null,
 
-	@Json(name="question_id")
 	@PrimaryKey
+	@Json(name="question_id")
 	val questionId: Int,
 
 	@Json(name="tags")
-	val tags: List<String>? = null,
+	val tags: List<String?>? = null,
 
 	@Json(name="score")
 	val score: Int? = null,
 
-	@Json(name="closed_reason")
-	val closedReason: String? = null,
+	@Json(name="bounty_amount")
+	val bountyAmount: Int? = null,
+
+	@Json(name="bounty_closes_date")
+	val bountyClosesDate: Int? = null,
 
 	@Json(name="is_answered")
 	val isAnswered: Boolean? = null,
@@ -67,18 +70,17 @@ data class Questions(
 	@Json(name="last_edit_date")
 	val lastEditDate: Int? = null,
 
-	@Json(name="content_license")
-	val contentLicense: String? = null,
-
 	@Json(name="accepted_answer_id")
-	val acceptedAnswerId: Int? = null,
-
+	val acceptedAnswerId: Int? = null
 )
 
-data class Owner(
+data class FeaturedQuestionOwner(
 
 	@Json(name="profile_image")
 	val profileImage: String? = null,
+
+	@Json(name="account_id")
+	val accountId: Int? = null,
 
 	@Json(name="user_type")
 	val userType: String? = null,
@@ -87,13 +89,13 @@ data class Owner(
 	val userId: Int? = null,
 
 	@Json(name="link")
-	val link: String? = null,
+	val OwnerLink: String? = null,
 
 	@Json(name="reputation")
 	val reputation: Int? = null,
 
 	@Json(name="display_name")
-	val displayName: String,
+	val displayName: String? = null,
 
 	@Json(name="accept_rate")
 	val acceptRate: Int? = null

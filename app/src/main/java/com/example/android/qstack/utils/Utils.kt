@@ -1,5 +1,12 @@
 package com.example.android.qstack.utils
 
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.PagingDataAdapter
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import java.util.*
 
 const val LINK_KEY = "link"
@@ -11,6 +18,7 @@ enum class OrderBY(val order : String){
 enum class SortBy(val sortOrder : String){
     ACTIVITY("activity"), CREATION("creation"), VOTES("votes")
 }
+
 
 fun Long.convertEpochDateToTime() : String{
     val dateNow = Date()

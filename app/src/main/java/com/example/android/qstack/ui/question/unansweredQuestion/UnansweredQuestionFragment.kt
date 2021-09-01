@@ -1,60 +1,107 @@
 package com.example.android.qstack.ui.question.unansweredQuestion
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.android.qstack.R
+import com.example.android.qstack.WebViewActivity
+import com.example.android.qstack.databinding.FragmentNewQuestionsBinding
+import com.example.android.qstack.utils.LINK_KEY
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [UnansweredQuestionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class UnansweredQuestionFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentNewQuestionsBinding
+    private val unansweredQuestionViewModel: UnansweredQuestionViewModel by viewModels()
+    private lateinit var unansweredQuestionAdapter: UnansweredQuestionAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_unanswered_question, container, false)
-    }
+        binding = FragmentNewQuestionsBinding.inflate(inflater, container, false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UnansweredQuestionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            UnansweredQuestionFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        binding.lifecycleOwner = viewLifecycleOwner
+        unansweredQuestionAdapter = UnansweredQuestionAdapter(ClickListener {
+            it?.let {link->
+                val intent = Intent(requireContext(), WebViewActivity::class.java)
+                intent.putExtra(LINK_KEY, link)
+                startActivity(intent)
+            }
+        })
+
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+            adapter = unansweredQuestionAdapter
+        }
+
+        lifecycleScope.launch {
+            unansweredQuestionViewModel.getDataFromRepo().collectLatest {
+                unansweredQuestionAdapter.submitData(it)
+            }
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            unansweredQuestionAdapter.refresh()
+            lifecycleScope.launch {
+                unansweredQuestionAdapter.loadStateFlow.distinctUntilChangedBy {
+                    it.refresh
+                }.filter {
+                    it.refresh is LoadState.NotLoading
+                }.collect {
+                    binding.swipeRefreshLayout.isRefreshing = false
                 }
             }
+        }
+
+        unansweredQuestionAdapter.retry()
+
+        lifecycleScope.launch {
+            init()
+        }
+        setHasOptionsMenu(true)
+        return binding.root
+    }
+    private suspend fun init(){
+        unansweredQuestionAdapter.loadStateFlow
+            .distinctUntilChangedBy {
+                it.refresh
+            }.filter {
+                it.refresh is LoadState.NotLoading
+            }.collect { binding.recyclerView.scrollToPosition(0) }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.swipe_refresh, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.swipe_refresh){
+            binding.swipeRefreshLayout.isRefreshing = true
+            lifecycleScope.launch {
+                unansweredQuestionAdapter.loadStateFlow.distinctUntilChangedBy {
+                    it.refresh
+                }.filter {
+                    it.refresh is LoadState.NotLoading
+                }.collect {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }
+            }
+            true
+        }else super.onOptionsItemSelected(item)
     }
 }

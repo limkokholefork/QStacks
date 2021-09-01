@@ -13,3 +13,13 @@ data class RemoteKey(@PrimaryKey val questionId : Int,
 data class NRemoteKey(@PrimaryKey val questionId : Int,
                      val prevKey : Int?,
                      val nextKey : Int?)
+
+@Entity
+data class FRemoteKey(@PrimaryKey val questionId: Int,
+                      val prevKey: Int?,
+                      val nextKey: Int?)
+
+@Entity
+data class URemoteKey(@PrimaryKey val questionId: Int,
+                      val prevKey: Int?,
+                      val nextKey: Int?)

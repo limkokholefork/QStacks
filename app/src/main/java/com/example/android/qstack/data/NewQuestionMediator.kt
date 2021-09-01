@@ -61,7 +61,7 @@ class NewQuestionMediator @Inject constructor(
                 val nextKey = if (endOfPaginationReached) null else pageNumber.plus(1)
 
                 val remoteKey = questionList.map {
-                    NRemoteKey(it.questionId, prevKey, nextKey)
+                    NRemoteKey(questionId = it.questionId, prevKey = prevKey, nextKey = nextKey)
                 }
                 qStacksDB.getNewQuestionDao().addNEwQuestions(questionList)
                 qStacksDB.getNRemoteKeyDao().addAllNRemoteKey(remoteKey)

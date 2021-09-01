@@ -4,10 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.example.android.qstack.model.NRemoteKey
-import com.example.android.qstack.model.NewQuestion
-import com.example.android.qstack.model.Questions
-import com.example.android.qstack.model.RemoteKey
+import com.example.android.qstack.model.*
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -17,19 +14,27 @@ import java.lang.reflect.ParameterizedType
 @Database(entities = [Questions::class,
     RemoteKey::class,
     NewQuestion::class,
-    NRemoteKey::class],
+    NRemoteKey::class,
+    FeaturedQuestion::class,
+    FRemoteKey::class,
+    URemoteKey::class,
+    UnansweredQuestion::class],
     exportSchema = false, version = 1)
 abstract class QStacksDB : RoomDatabase() {
     abstract fun getQuestionDao(): QuestionsDao
     abstract fun getRemoteKeyDao() : RemoteKeyDao
     abstract fun getNewQuestionDao() : NewQuestionDao
     abstract fun getNRemoteKeyDao() : NRemoteKeyDao
+    abstract fun getFeaturedQuestionDao(): FeaturedQuestionDao
+    abstract fun getFRemoteKeyDao(): FRemoteKeyDao
+    abstract fun getURemoteKeyDao(): URemoteKeyDao
+    abstract fun getUnansweredQuestion(): UnansweredQuestionDao
 }
 
 class TagsTypeConverter {
 
     private val moshi: Moshi = Moshi.Builder().build()
-    val type: ParameterizedType = Types.newParameterizedType(List::class.java, String::class.java)
+    private val type: ParameterizedType = Types.newParameterizedType(List::class.java, String::class.java)
     private val adapter: JsonAdapter<List<String>> = moshi.adapter(type)
 
     @TypeConverter
