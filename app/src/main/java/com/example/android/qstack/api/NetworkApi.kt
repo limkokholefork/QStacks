@@ -51,5 +51,14 @@ interface NetworkApi {
     )
             : Deferred<UnansweredQuestionResponse>
 
+    @GET("search")
+    fun searchQuestionsAsync(
+        @Query("site") site: String,
+        @Query("order") order: String,
+        @Query("sort") sortOrder: String,
+        @Query("pagesize") pageSize: Int,
+        @Query("intitle") searchQuestion: String
+    )
+        :Deferred<QuestionResponse>
 
 }

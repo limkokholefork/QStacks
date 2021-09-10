@@ -1,6 +1,5 @@
 package com.example.android.qstack.ui.question.generalQuestions
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
@@ -14,8 +13,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 @HiltViewModel
-class GeneralQuestionViewModel @Inject constructor(private val repository: QuestionRepo,
-                                                   private val savedStateHandle: SavedStateHandle)
+class GeneralQuestionViewModel @Inject constructor(private val repository: QuestionRepo)
     : ViewModel() {
 
     fun getDataFromRepo() : Flow<PagingData<Questions>>{

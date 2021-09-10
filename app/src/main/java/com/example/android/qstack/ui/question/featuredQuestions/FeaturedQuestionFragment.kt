@@ -73,30 +73,9 @@ class FeaturedQuestionFragment : Fragment() {
             init()
         }
 
-        setHasOptionsMenu(true)
+        setHasOptionsMenu(false)
 
         return binding.root
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.swipe_refresh, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.swipe_refresh){
-            binding.swipeRefreshLayout.isRefreshing = true
-            featuredQuestionAdapter.refresh()
-            lifecycleScope.launch {
-                featuredQuestionAdapter.loadStateFlow.distinctUntilChangedBy {
-                    it.refresh
-                }.filter {
-                    it.refresh is LoadState.NotLoading
-                }.collect {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                }
-            }
-            true
-        }else super.onOptionsItemSelected(item)
     }
 
     private suspend fun init(){

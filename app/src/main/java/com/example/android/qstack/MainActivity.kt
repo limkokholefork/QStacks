@@ -1,11 +1,15 @@
 package com.example.android.qstack
 
+import android.app.SearchManager
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.Menu
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.StyleableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -22,6 +26,7 @@ import com.example.android.qstack.ui.users.UsersFragment
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -135,11 +140,17 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
         slidingRootNav.closeMenu()
     }
 
-//    private fun showFragment(fragment: Fragment){
-//        supportFragmentManager.commit {
-//            replace(R.id.fragment_container, fragment)
-//            setReorderingAllowed(true)
-//            addToBackStack("name")
-//        }
-//    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.search_menu, menu)
+
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        (menu?.findItem(R.id.search_menu)?.actionView as SearchView).apply {
+            // Assumes current activity is the searchable activity
+            Timber.d("menu gbaun")
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            // Do not iconify the widget; expand it by default
+        }
+        return true
+    }
+
 }

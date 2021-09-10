@@ -3,10 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.24382314694408322" />
+        <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_search.xml" value="0.18020833333333333" />
         <entry key="app/src/main/res/layout/fragment_featured_question.xml" value="0.17314814814814813" />
         <entry key="app/src/main/res/layout/fragment_new_questions.xml" value="0.17314814814814813" />
+        <entry key="app/src/main/res/layout/item_search.xml" value="0.2" />
         <entry key="app/src/main/res/layout/question_item.xml" value="0.17314814814814813" />
+        <entry key="app/src/main/res/layout/question_viewpager.xml" value="0.15462962962962962" />
+        <entry key="app/src/main/res/menu/search_menu.xml" value="0.18020833333333333" />
         <entry key="app/src/main/res/menu/swipe_refresh.xml" value="0.17743589743589744" />
+        <entry key="app/src/main/res/xml/searchable.xml" value="0.11666666666666667" />
       </map>
     </option>
   </component>

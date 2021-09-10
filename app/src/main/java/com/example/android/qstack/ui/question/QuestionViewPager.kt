@@ -27,6 +27,7 @@ class QuestionViewPager : Fragment() {
         val fragmentList = arrayListOf(GeneralQuestionsFragment.newInstance(), NewQuestionFragment(),
             FeaturedQuestionFragment(), UnansweredQuestionFragment())
         binding.viewpager.adapter = QuestionViewPagerAdapter(this, fragmentList)
+        binding.viewpager.offscreenPageLimit = 4
 
         TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
             when (position) {

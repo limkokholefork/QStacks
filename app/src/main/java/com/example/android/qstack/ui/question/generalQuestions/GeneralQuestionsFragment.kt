@@ -65,7 +65,7 @@ class GeneralQuestionsFragment : Fragment() {
             init()
         }
 
-        setHasOptionsMenu(true)
+        setHasOptionsMenu(false)
         return binding.root
     }
 
@@ -89,26 +89,5 @@ class GeneralQuestionsFragment : Fragment() {
             }.collect { binding.recyclerView.scrollToPosition(0) }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.swipe_refresh, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.swipe_refresh){
-            questionAdapter.refresh()
-            lifecycleScope.launch {
-                questionAdapter.loadStateFlow.distinctUntilChangedBy {
-                    it.refresh
-                }.filter {
-                    it.refresh is LoadState.NotLoading
-                }.collect {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                }
-            }
-            true
-        }else{
-            super.onOptionsItemSelected(item)
-        }
-    }
 
 }

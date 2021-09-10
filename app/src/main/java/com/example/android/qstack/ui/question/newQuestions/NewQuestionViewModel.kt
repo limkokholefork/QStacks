@@ -18,5 +18,4 @@ class NewQuestionViewModel @Inject constructor(private val repo : NewQuestionRep
         fun getAllNewQuestion() : Flow<PagingData<NewQuestion>>{
             return repo.getNewQuestions().cachedIn(viewModelScope)
         }
-
 }

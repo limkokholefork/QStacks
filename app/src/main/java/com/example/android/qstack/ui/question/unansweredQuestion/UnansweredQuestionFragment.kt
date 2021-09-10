@@ -73,7 +73,7 @@ class UnansweredQuestionFragment : Fragment() {
         lifecycleScope.launch {
             init()
         }
-        setHasOptionsMenu(true)
+        setHasOptionsMenu(false)
         return binding.root
     }
     private suspend fun init(){
@@ -83,25 +83,5 @@ class UnansweredQuestionFragment : Fragment() {
             }.filter {
                 it.refresh is LoadState.NotLoading
             }.collect { binding.recyclerView.scrollToPosition(0) }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.swipe_refresh, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.swipe_refresh){
-            binding.swipeRefreshLayout.isRefreshing = true
-            lifecycleScope.launch {
-                unansweredQuestionAdapter.loadStateFlow.distinctUntilChangedBy {
-                    it.refresh
-                }.filter {
-                    it.refresh is LoadState.NotLoading
-                }.collect {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                }
-            }
-            true
-        }else super.onOptionsItemSelected(item)
     }
 }
