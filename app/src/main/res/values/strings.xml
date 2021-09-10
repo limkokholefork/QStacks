@@ -6,4 +6,5 @@
     <string name="search_hint">Search questions</string>
     <string name="icons">icons</string>
     <string name="search_questions">Search questions</string>
+    <string name="display_questions_using_tags_selections_allowed">Display Questions using tags(5 selections allowed):</string>
 </resources>

@@ -16,7 +16,7 @@ enum class OrderBY(val order : String){
 }
 
 enum class SortBy(val sortOrder : String){
-    ACTIVITY("activity"), CREATION("creation"), VOTES("votes")
+    ACTIVITY("activity"), CREATION("creation"), POPULAR("popular")
 }
 
 
