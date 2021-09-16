@@ -18,7 +18,8 @@ import java.lang.reflect.ParameterizedType
     FeaturedQuestion::class,
     FRemoteKey::class,
     URemoteKey::class,
-    UnansweredQuestion::class],
+    UnansweredQuestion::class,
+    TagDbModel::class],
     exportSchema = false, version = 1)
 abstract class QStacksDB : RoomDatabase() {
     abstract fun getQuestionDao(): QuestionsDao
@@ -29,6 +30,7 @@ abstract class QStacksDB : RoomDatabase() {
     abstract fun getFRemoteKeyDao(): FRemoteKeyDao
     abstract fun getURemoteKeyDao(): URemoteKeyDao
     abstract fun getUnansweredQuestion(): UnansweredQuestionDao
+    abstract fun getTagsDao(): TagDbDao
 }
 
 class TagsTypeConverter {

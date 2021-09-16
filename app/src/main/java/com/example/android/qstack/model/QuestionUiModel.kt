@@ -23,3 +23,7 @@ data class FRemoteKey(@PrimaryKey val questionId: Int,
 data class URemoteKey(@PrimaryKey val questionId: Int,
                       val prevKey: Int?,
                       val nextKey: Int?)
+
+@Entity
+data class TagDbModel(@PrimaryKey(autoGenerate = true) val id: Int = 0,
+                      val tagName: String)

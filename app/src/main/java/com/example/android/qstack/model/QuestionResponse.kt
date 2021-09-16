@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
+import java.lang.StringBuilder
 
 data class QuestionResponse(
 
@@ -44,6 +45,9 @@ data class Questions(
 
 	@Json(name="title")
 	val title: String,
+
+	@Json(name = "body")
+	val questionBody: String? = null,
 
 	@Json(name="question_id")
 	@PrimaryKey

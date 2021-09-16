@@ -24,18 +24,34 @@
             android:text="@string/display_questions_using_tags_selections_allowed"
             android:textSize="16sp" />
 
-        <androidx.core.widget.NestedScrollView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                app:selectionRequired="true"
-                app:setChipDisplay="@{tagViewModel.uiState}" />
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        </androidx.core.widget.NestedScrollView>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:progressVisibility="@{tagViewModel.uiState}"/>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    app:selectionRequired="true"
+                    app:setChipDisplay="@{tagViewModel.uiState}" />
+
+            </androidx.core.widget.NestedScrollView>
+
+        </FrameLayout>
     </LinearLayout>
 </layout>

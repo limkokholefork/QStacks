@@ -99,5 +99,9 @@ dependencies {
     //Custom Search
     implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
 
+    //Rounded ImageView
+    implementation 'com.rishabhharit.roundedimageview:RoundedImageView:0.8.4'
+
+
 
 }

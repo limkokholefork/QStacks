@@ -3,6 +3,7 @@ package com.example.android.qstack
 import android.app.SearchManager
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import androidx.annotation.ColorInt
@@ -23,6 +24,7 @@ import com.example.android.qstack.menu.SimpleItem
 import com.example.android.qstack.ui.question.QuestionViewPager
 import com.example.android.qstack.ui.tag.TagFragment
 import com.example.android.qstack.ui.users.UsersFragment
+import com.example.android.qstack.utils.displaySnackBar
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_Qstack)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -146,7 +149,6 @@ class MainActivity : AppCompatActivity(), DrawerAdapter.OnItemSelectedListener {
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         (menu?.findItem(R.id.search_menu)?.actionView as SearchView).apply {
             // Assumes current activity is the searchable activity
-            Timber.d("menu gbaun")
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             // Do not iconify the widget; expand it by default
         }

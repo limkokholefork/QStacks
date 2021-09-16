@@ -56,7 +56,7 @@ data class TagItem(
 	val count: Int? = null,
 
 	@Json(name="name")
-	val name: String? = null,
+	val name: String = "",
 
 	@Json(name="has_synonyms")
 	val hasSynonyms: Boolean? = null,

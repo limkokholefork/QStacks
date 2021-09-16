@@ -42,6 +42,9 @@ data class FeaturedQuestion(
 	@Json(name="answer_count")
 	val answerCount: Int? = null,
 
+	@Json(name = "body")
+	val questionBody: String? = null,
+
 	@Json(name="title")
 	val title: String? = null,
 

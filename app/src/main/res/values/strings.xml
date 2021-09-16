@@ -6,5 +6,15 @@
     <string name="search_hint">Search questions</string>
     <string name="icons">icons</string>
     <string name="search_questions">Search questions</string>
-    <string name="display_questions_using_tags_selections_allowed">Display Questions using tags(5 selections allowed):</string>
+    <string name="display_questions_using_tags_selections_allowed">Show Questions having the following tags(max: 5):</string>
+    <string name="get_questions">Get Questions</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="user_reputation">Reputation:</string>
+    <string name="user_status">Status:</string>
+    <string name="about">About</string>
+    <string name="placeholder_about">Senior Frontend Developer. Working mostly with Reactjs, Redux, typescripts. Build production-ready web applications from scratch with unit-test cover > 80%. Fully configured webpack, babel, and optimize page\'s speed as well as on-page SEO.</string>
+    <string name="retry">Retry</string>
+    <string name="no_data_to_display_here">No data to display here</string>
+    <string name="no_connection">no connection image</string>
+    <string name="no_internet">No internet connection detected</string>
 </resources>

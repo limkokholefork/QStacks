@@ -18,15 +18,15 @@ import javax.inject.Inject
 
 
 @OptIn(ExperimentalPagingApi::class)
-class FeaturedQuestionMediator @Inject constructor(private val qStacksDB: QStacksDB,
-                                           private val networkApi: NetworkApi
-)
-    : RemoteMediator<Int, FeaturedQuestion>() {
+class FeaturedQuestionMediator @Inject constructor(
+    private val qStacksDB: QStacksDB,
+    private val networkApi: NetworkApi
+) : RemoteMediator<Int, FeaturedQuestion>() {
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, FeaturedQuestion>
     ): MediatorResult {
-        val pageNumber = when(loadType){
+        val pageNumber = when (loadType) {
             LoadType.PREPEND -> {
                 val remoteKey = getRemoteKeyFromFirstPage(state)
                 val prevKey = remoteKey?.prevKey
@@ -46,14 +46,18 @@ class FeaturedQuestionMediator @Inject constructor(private val qStacksDB: QStack
         }
 
         try {
-            val response = networkApi.getAllFeaturedQuestionAsync(site = SITE,
-                OrderBY.DESC.order,
-                SortBy.ACTIVITY.sortOrder, pageNumber, state.config.pageSize)
+            val response = networkApi.getAllFeaturedQuestionAsync(
+                site = SITE,
+                order = OrderBY.DESC.order,
+                sortOrder = SortBy.ACTIVITY.sortOrder,
+                page = pageNumber,
+                pageSize = state.config.pageSize
+            )
             val questions = response.await()
             val questionList = questions.items
             val endOfPaginationReached = questionList.isEmpty()
             qStacksDB.withTransaction {
-                if (loadType == LoadType.REFRESH){
+                if (loadType == LoadType.REFRESH) {
                     qStacksDB.getFeaturedQuestionDao().nukeFeaturedQuestion()
                     qStacksDB.getFRemoteKeyDao().nukeFRemoteKeyTable()
                 }
@@ -66,17 +70,17 @@ class FeaturedQuestionMediator @Inject constructor(private val qStacksDB: QStack
                 qStacksDB.getFRemoteKeyDao().addAllRemoteKey(remoteKeys)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-        }catch (exception : IOException){
+        } catch (exception: IOException) {
             Timber.d(exception)
             return MediatorResult.Error(exception)
-        }catch (ex : HttpException){
+        } catch (ex: HttpException) {
             Timber.d(ex)
             return MediatorResult.Error(ex)
         }
 
     }
 
-    private suspend fun getRemoteKeyFromFirstPage(state: PagingState<Int, FeaturedQuestion>) : FRemoteKey?{
+    private suspend fun getRemoteKeyFromFirstPage(state: PagingState<Int, FeaturedQuestion>): FRemoteKey? {
         return state.pages.firstOrNull {
             it.data.isNotEmpty()
         }?.data?.firstOrNull()?.let {
@@ -84,7 +88,7 @@ class FeaturedQuestionMediator @Inject constructor(private val qStacksDB: QStack
         }
     }
 
-    private suspend fun getRemoteKeyFromLastPage(state: PagingState<Int, FeaturedQuestion>) : FRemoteKey?{
+    private suspend fun getRemoteKeyFromLastPage(state: PagingState<Int, FeaturedQuestion>): FRemoteKey? {
         return state.pages.lastOrNull {
             it.data.isNotEmpty()
         }?.data?.lastOrNull()?.let {
@@ -92,12 +96,16 @@ class FeaturedQuestionMediator @Inject constructor(private val qStacksDB: QStack
         }
     }
 
-    private suspend fun getRemoteKeyClosestToPosition(state: PagingState<Int, FeaturedQuestion>) : FRemoteKey?{
-        return state.anchorPosition?.let {position->
-            state.closestItemToPosition(position)?.questionId?.let { questionId->
+    private suspend fun getRemoteKeyClosestToPosition(state: PagingState<Int, FeaturedQuestion>): FRemoteKey? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.questionId?.let { questionId ->
                 qStacksDB.getFRemoteKeyDao().getFRemoteKeysById(questionId)
             }
         }
+    }
+
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.SKIP_INITIAL_REFRESH
     }
 
 }

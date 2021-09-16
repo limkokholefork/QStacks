@@ -32,6 +32,10 @@
             android:id="@+id/linear_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <include
+            android:id="@+id/no_network_view"
+            android:visibility="gone"
+            layout="@layout/no_network"/>
 
         <WebView
             android:id="@+id/web_view"

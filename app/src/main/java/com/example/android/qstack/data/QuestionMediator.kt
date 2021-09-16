@@ -49,8 +49,9 @@ class QuestionMediator @Inject constructor(private val qStacksDB: QStacksDB,
 
         try {
             val response = networkApi.getQuestionsAsync(site = SITE,
-                OrderBY.DESC.order,
-                SortBy.ACTIVITY.sortOrder, pageNumber, state.config.pageSize)
+                order = OrderBY.DESC.order,
+                sortOrder = SortBy.ACTIVITY.sortOrder, page = pageNumber,
+                pageSize = state.config.pageSize)
             val questions = response.await()
             val questionList = questions.items
             val endOfPaginationReached = questionList.isEmpty()
@@ -101,5 +102,9 @@ class QuestionMediator @Inject constructor(private val qStacksDB: QStacksDB,
                     qStacksDB.getRemoteKeyDao().getRemoteKeyById(questionId)
             }
         }
+    }
+
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.SKIP_INITIAL_REFRESH
     }
 }

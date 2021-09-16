@@ -26,4 +26,7 @@ object DatabaseModule {
 
     @Provides
     fun provideLogDao(qStacksDB: QStacksDB) = qStacksDB.getQuestionDao()
+
+    @Provides
+    fun provideTagDAo(qStacksDB: QStacksDB) = qStacksDB.getTagsDao()
 }

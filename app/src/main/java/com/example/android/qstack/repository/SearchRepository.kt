@@ -16,4 +16,5 @@ class SearchRepository @Inject constructor(private val networkApi: NetworkApi) {
             sortOrder = SortBy.ACTIVITY.sortOrder,
             order = OrderBY.DESC.order, searchQuestion = searchQuery, pageSize = 99)
     }
+
 }

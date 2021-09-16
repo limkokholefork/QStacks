@@ -3,6 +3,8 @@ package com.example.android.qstack.ui.question.newQuestions
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -35,8 +37,46 @@ class NewQuestionAdapter(private val listener: NewQuestionListener) : PagingData
             binding.views.text = "${question?.viewCount?.toString() ?: (-1).toString()}views"
             binding.votes.text = "${question?.score?.toString() ?: (-1).toString()}votes"
             binding.textViewName.text = question?.owner?.displayName
-            binding.textViewTitle.text = question?.title
+            binding.textViewTitle.text = question?.title?.let {
+                HtmlCompat.fromHtml(
+                    it,
+                    HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
+            }
             binding.textViewTime.text = question?.creationDate?.convertEpochDateToTime()
+            binding.questionBody.text =
+                question?.questionBody?.let {
+                    HtmlCompat.fromHtml(
+                        it,
+                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
+                }
+            if (question?.tags != null) createTags(question.tags, question)
+        }
+
+        private fun createTags(tags: List<String?>, question: NewQuestion?) {
+            when {
+                tags.size >= 3 -> {
+                    binding.tagOne.text = question?.tags?.get(0)
+                    binding.tagTwo.text = question?.tags?.get(1)
+                    binding.tagThree.text = question?.tags?.get(2)
+                }
+                tags.size == 2 -> {
+                    binding.tagOne.text = question?.tags?.get(0)
+                    binding.tagTwo.text = question?.tags?.get(1)
+                    binding.tagThree.isVisible = false
+                }
+                tags.size == 1 -> {
+                    binding.tagOne.text = question?.tags?.get(0)
+                    binding.tagTwo.isVisible = false
+                    binding.tagThree.isVisible = false
+                }
+                else -> {
+                    binding.tagOne.isVisible = false
+                    binding.tagTwo.isVisible = false
+                    binding.tagThree.isVisible = false
+                }
+            }
         }
 
         private fun ImageView.bindImageToView(profilePicsUrl : String?){

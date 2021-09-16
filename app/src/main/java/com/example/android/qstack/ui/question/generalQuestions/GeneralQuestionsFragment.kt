@@ -3,13 +3,15 @@ package com.example.android.qstack.ui.question.generalQuestions
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.android.qstack.R
 import com.example.android.qstack.WebViewActivity
 import com.example.android.qstack.databinding.FragmentNewQuestionsBinding
 import com.example.android.qstack.utils.LINK_KEY
@@ -41,6 +43,10 @@ class GeneralQuestionsFragment : Fragment() {
                 startActivity(intent)
             }
         })
+
+        binding.retryButton.setOnClickListener {
+            questionAdapter.refresh()
+        }
         binding.recyclerView.apply {
             adapter = questionAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -53,9 +59,33 @@ class GeneralQuestionsFragment : Fragment() {
                 questionAdapter.loadStateFlow.distinctUntilChangedBy {
                     it.refresh
                 }.filter {
-                    it.refresh is LoadState.NotLoading
+                    it.refresh is LoadState.NotLoading || it.refresh is LoadState.Error
                 }.collect {
                     binding.swipeRefreshLayout.isRefreshing = false
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            questionAdapter.loadStateFlow.collect { loadState: CombinedLoadStates ->
+                val isEmpty = loadState.source.refresh is LoadState.NotLoading &&
+                        questionAdapter.itemCount == 0
+//                binding.recyclerView.isVisible = !isEmpty
+                binding.emptyList.isVisible = isEmpty
+
+                val isLoading = loadState.source.refresh is LoadState.Loading
+                binding.progressCircular.isVisible = isLoading
+
+                val errorLoading = loadState.source.refresh is LoadState.Error
+                binding.retryButton.isVisible = errorLoading
+
+                val errorMessage = loadState.source.append as? LoadState.Error
+                    ?: loadState.source.prepend as? LoadState.Error
+                    ?: loadState.append as? LoadState.Error
+                    ?: loadState.prepend as? LoadState.Error
+
+                errorMessage?.let {
+                    Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -77,6 +107,7 @@ class GeneralQuestionsFragment : Fragment() {
         lifecycleScope.launch {
             generalQuestionViewModel.getDataFromRepo().collectLatest {
                 questionAdapter.submitData(it)
+                binding.progressCircular.isVisible = false
             }
         }
     }
@@ -88,6 +119,5 @@ class GeneralQuestionsFragment : Fragment() {
                 it.refresh is LoadState.NotLoading
             }.collect { binding.recyclerView.scrollToPosition(0) }
     }
-
 
 }

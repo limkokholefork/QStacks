@@ -17,15 +17,15 @@ import java.io.IOException
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class UnansweredQuestionMediator @Inject constructor(private val qStacksDB: QStacksDB,
-                                           private val networkApi: NetworkApi
-)
-    : RemoteMediator<Int, UnansweredQuestion>() {
+class UnansweredQuestionMediator @Inject constructor(
+    private val qStacksDB: QStacksDB,
+    private val networkApi: NetworkApi
+) : RemoteMediator<Int, UnansweredQuestion>() {
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, UnansweredQuestion>
     ): MediatorResult {
-        val pageNumber = when(loadType){
+        val pageNumber = when (loadType) {
             LoadType.PREPEND -> {
                 val remoteKey = getRemoteKeyFromFirstPage(state)
                 val prevKey = remoteKey?.prevKey
@@ -45,14 +45,18 @@ class UnansweredQuestionMediator @Inject constructor(private val qStacksDB: QSta
         }
 
         try {
-            val response = networkApi.getAllUnansweredQuestionAsync(site = SITE,
-                OrderBY.DESC.order,
-                SortBy.ACTIVITY.sortOrder, pageNumber, state.config.pageSize)
+            val response = networkApi.getAllUnansweredQuestionAsync(
+                site = SITE,
+                order = OrderBY.DESC.order,
+                sortOrder = SortBy.ACTIVITY.sortOrder,
+                page = pageNumber,
+                pageSize = state.config.pageSize
+            )
             val questions = response.await()
             val questionList = questions.items
             val endOfPaginationReached = questionList.isEmpty()
             qStacksDB.withTransaction {
-                if (loadType == LoadType.REFRESH){
+                if (loadType == LoadType.REFRESH) {
                     qStacksDB.getUnansweredQuestion().nukeTable()
                     qStacksDB.getURemoteKeyDao().nukeURemoteKeyTable()
                 }
@@ -65,17 +69,17 @@ class UnansweredQuestionMediator @Inject constructor(private val qStacksDB: QSta
                 qStacksDB.getURemoteKeyDao().addAllRemoteKey(remoteKeys)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-        }catch (exception : IOException){
+        } catch (exception: IOException) {
             Timber.d(exception)
             return MediatorResult.Error(exception)
-        }catch (ex : HttpException){
+        } catch (ex: HttpException) {
             Timber.d(ex)
             return MediatorResult.Error(ex)
         }
 
     }
 
-    private suspend fun getRemoteKeyFromFirstPage(state: PagingState<Int, UnansweredQuestion>) : URemoteKey?{
+    private suspend fun getRemoteKeyFromFirstPage(state: PagingState<Int, UnansweredQuestion>): URemoteKey? {
         return state.pages.firstOrNull {
             it.data.isNotEmpty()
         }?.data?.firstOrNull()?.let {
@@ -83,7 +87,7 @@ class UnansweredQuestionMediator @Inject constructor(private val qStacksDB: QSta
         }
     }
 
-    private suspend fun getRemoteKeyFromLastPage(state: PagingState<Int, UnansweredQuestion>) : URemoteKey?{
+    private suspend fun getRemoteKeyFromLastPage(state: PagingState<Int, UnansweredQuestion>): URemoteKey? {
         return state.pages.lastOrNull {
             it.data.isNotEmpty()
         }?.data?.lastOrNull()?.let {
@@ -92,11 +96,15 @@ class UnansweredQuestionMediator @Inject constructor(private val qStacksDB: QSta
     }
 
     private suspend fun getRemoteKeyClosestToPosition(state: PagingState<Int, UnansweredQuestion>)
-    : URemoteKey?{
-        return state.anchorPosition?.let {position->
-            state.closestItemToPosition(position)?.questionId?.let { questionId->
+            : URemoteKey? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.questionId?.let { questionId ->
                 qStacksDB.getURemoteKeyDao().getFRemoteKeysById(questionId)
             }
         }
+    }
+
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.SKIP_INITIAL_REFRESH
     }
 }

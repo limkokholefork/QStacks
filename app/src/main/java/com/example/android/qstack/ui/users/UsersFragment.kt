@@ -1,60 +1,122 @@
 package com.example.android.qstack.ui.users
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.*
+import android.widget.SearchView
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.android.qstack.R
+import com.example.android.qstack.UserDetailActivity
+import com.example.android.qstack.databinding.FragmentUsersBinding
+import com.example.android.qstack.search.UserSearchActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+const val USER_DETAIL_KEY = "userDetailKey"
+const val SEARCH_USER_KEY = "searchUserkey"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [UsersFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class UsersFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentUsersBinding
+
+    private val userViewModel: UserViewModel by viewModels()
+
+    private lateinit var userAdapter: UserAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_users, container, false)
-    }
+        binding = FragmentUsersBinding.inflate(layoutInflater, container, false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UsersFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            UsersFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        binding.retryButton.setOnClickListener {
+            userAdapter.refresh()
+        }
+
+
+
+        userAdapter = UserAdapter(UserClickItemListener { userId->
+            userId?.let {
+                val intent = Intent(requireContext(), UserDetailActivity::class.java)
+                intent.putExtra(USER_DETAIL_KEY, it)
+                startActivity(intent)
+            }
+        })
+
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        binding.recyclerUserView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = userAdapter
+            addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+        }
+        lifecycleScope.launch {
+            userAdapter.loadStateFlow.collect {loadState->
+                val isEmpty: Boolean = loadState.source.refresh is LoadState.NotLoading
+                        && userAdapter.itemCount == 0
+                binding.emptyView.isVisible = isEmpty
+                val isLoading = loadState.source.refresh is LoadState.Loading
+                binding.progressBar.isVisible = isLoading
+
+                val errorLoading = loadState.source.refresh is LoadState.Error
+                binding.retryButton.isVisible= errorLoading
+
+
+                val errorMessage = loadState.source.append as? LoadState.Error
+                    ?: loadState.source.prepend as? LoadState.Error
+                    ?: loadState.append as? LoadState.Error
+                    ?: loadState.prepend as? LoadState.Error
+
+                errorMessage?.let {
+                    Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_LONG).show()
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            userViewModel.getAllUsers().collect {
+                userAdapter.submitData(it)
+            }
+        }
+
+        setHasOptionsMenu(true)
+
+        return binding.root
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.search_menu, menu)
+        val searchView = (menu.findItem(R.id.search_menu)?.actionView as
+                androidx.appcompat.widget.SearchView)
+        searchView.queryHint = "Search users"
+        val listener = object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(searchQuery: String?): Boolean {
+                if (searchQuery?.isBlank() != true){
+                    Intent(requireContext(), UserSearchActivity::class.java).apply {
+                        putExtra(SEARCH_USER_KEY, searchQuery)
+                        startActivity(this)
+                    }
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        }
+        searchView.setOnQueryTextListener(listener)
+    }
+
+
 }

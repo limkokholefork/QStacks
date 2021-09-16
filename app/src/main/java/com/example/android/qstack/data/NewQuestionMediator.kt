@@ -45,9 +45,12 @@ class NewQuestionMediator @Inject constructor(
 
         try {
             val response = networkApi.getNewestQuestionAsync(
-                SITE,
-                OrderBY.DESC.order, SortBy.CREATION.sortOrder,
-                "newest", pageNumber, state.config.pageSize
+                site = SITE,
+                order = OrderBY.DESC.order,
+                sortOrder = SortBy.CREATION.sortOrder,
+                newQuestion = "newest",
+                page = pageNumber,
+                pageSize = state.config.pageSize
             )
             val newQuestionResponse = response.await()
             val questionList = newQuestionResponse.items
@@ -98,5 +101,9 @@ class NewQuestionMediator @Inject constructor(
                 qStacksDB.getNRemoteKeyDao().getRemoteKeyById(it)
             }
         }
+    }
+
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.SKIP_INITIAL_REFRESH
     }
 }
